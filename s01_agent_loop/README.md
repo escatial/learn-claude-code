@@ -3,6 +3,7 @@
 [中文](README.md) · [English](README.en.md) · [日本語](README.ja.md)
 
 `s01` → [s02](../s02_tool_use/) → s03 → s04 → ... → s20
+
 > *"One loop & Bash is all you need"* — 一个工具 + 一个循环 = 一个 Agent。
 >
 > **Harness 层**: 循环 — 模型与真实世界的第一道连接。
@@ -27,10 +28,10 @@
 
 一个 `while True` 循环，模型调用工具就继续，不调用就停。整个过程只有两个信号：
 
-| 信号 | 含义 | 循环动作 |
-|------|------|---------|
+| 信号                          | 含义                   | 循环动作                   |
+| ----------------------------- | ---------------------- | -------------------------- |
 | `stop_reason == "tool_use"` | 模型举手说"我要用工具" | 执行 → 结果喂回去 → 继续 |
-| `stop_reason != "tool_use"` | 模型说"我做完了" | 退出循环 |
+| `stop_reason != "tool_use"` | 模型说"我做完了"       | 退出循环                   |
 
 ---
 
@@ -169,18 +170,18 @@ let needsFollowUp = false
 <details>
 <summary>二、State 对象 10 字段（教学版只用 messages）</summary>
 
-| # | 字段 | 用途 | 对应章节 |
-|---|------|------|---------|
-| 1 | `messages` | 当前迭代的消息数组 | s01 |
-| 2 | `toolUseContext` | 工具、信号、权限上下文 | s02 |
-| 3 | `autoCompactTracking` | 压缩状态追踪 | s08 |
-| 4 | `maxOutputTokensRecoveryCount` | token 恢复尝试次数（上限 3） | s11 |
-| 5 | `hasAttemptedReactiveCompact` | 本轮是否已尝试响应式压缩 | s08 |
-| 6 | `maxOutputTokensOverride` | 8K→64K 的升级覆盖 | s11 |
-| 7 | `pendingToolUseSummary` | 后台 Haiku 生成的 tool use 摘要 | s08 |
-| 8 | `stopHookActive` | 停止钩子是否产生阻塞错误 | s04 |
-| 9 | `turnCount` | 轮次计数（maxTurns 检查） | s01 |
-| 10 | `transition` | 上一次继续原因 | s11 |
+| #  | 字段                             | 用途                            | 对应章节 |
+| -- | -------------------------------- | ------------------------------- | -------- |
+| 1  | `messages`                     | 当前迭代的消息数组              | s01      |
+| 2  | `toolUseContext`               | 工具、信号、权限上下文          | s02      |
+| 3  | `autoCompactTracking`          | 压缩状态追踪                    | s08      |
+| 4  | `maxOutputTokensRecoveryCount` | token 恢复尝试次数（上限 3）    | s11      |
+| 5  | `hasAttemptedReactiveCompact`  | 本轮是否已尝试响应式压缩        | s08      |
+| 6  | `maxOutputTokensOverride`      | 8K→64K 的升级覆盖              | s11      |
+| 7  | `pendingToolUseSummary`        | 后台 Haiku 生成的 tool use 摘要 | s08      |
+| 8  | `stopHookActive`               | 停止钩子是否产生阻塞错误        | s04      |
+| 9  | `turnCount`                    | 轮次计数（maxTurns 检查）       | s01      |
+| 10 | `transition`                   | 上一次继续原因                  | s11      |
 
 > 注：`taskBudgetRemaining`（`query.ts:291`）是 loop-local 局部变量，不在 State 上。源码注释明确写了 "Loop-local (not on State)"。
 

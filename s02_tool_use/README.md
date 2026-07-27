@@ -3,6 +3,7 @@
 [中文](README.md) · [English](README.en.md) · [日本語](README.ja.md)
 
 s01 → `s02` → [s03](../s03_permission/) → s04 → ... → s20
+
 > *"加一个工具, 只加一个 handler"* — 循环不用动, 新工具注册进 dispatch map 就行。
 >
 > **Harness 层**: 工具分发 — 扩展模型能触达的边界。
@@ -112,23 +113,23 @@ for block in response.content:
 
 ## 速查
 
-| 概念 | 一句话 |
-|------|--------|
-| TOOL_HANDLERS | 工具名 → 处理函数的字典。加工具 = 加一行映射 |
-| 工具定义 | 告诉模型"我能做什么"的 JSON schema |
-| 多工具调用 | 模型可一次返回多个 tool_use，教学版按原始顺序逐个执行 |
-| 循环不变 | s01 的 `while True` 循环一行都没改 |
+| 概念          | 一句话                                                |
+| ------------- | ----------------------------------------------------- |
+| TOOL_HANDLERS | 工具名 → 处理函数的字典。加工具 = 加一行映射         |
+| 工具定义      | 告诉模型"我能做什么"的 JSON schema                    |
+| 多工具调用    | 模型可一次返回多个 tool_use，教学版按原始顺序逐个执行 |
+| 循环不变      | s01 的`while True` 循环一行都没改                   |
 
 ---
 
 ## 相对 s01 的变更
 
-| 组件 | 之前 (s01) | 之后 (s02) |
-|------|-----------|-----------|
-| 工具数量 | 1 (bash) | 5 (+read, write, edit, glob) |
-| 工具执行 | 硬编码 `run_bash()` | TOOL_HANDLERS 查表分发 |
-| 路径安全 | 无 | safe_path 校验（仅 file tools） |
-| 循环 | `while True` + `stop_reason` | 与 s01 完全一致 |
+| 组件     | 之前 (s01)                       | 之后 (s02)                      |
+| -------- | -------------------------------- | ------------------------------- |
+| 工具数量 | 1 (bash)                         | 5 (+read, write, edit, glob)    |
+| 工具执行 | 硬编码`run_bash()`             | TOOL_HANDLERS 查表分发          |
+| 路径安全 | 无                               | safe_path 校验（仅 file tools） |
+| 循环     | `while True` + `stop_reason` | 与 s01 完全一致                 |
 
 ---
 
@@ -174,13 +175,13 @@ s03 Permission → 在工具执行之前加一道门：这个操作安全吗？�
 
 教学版按原始顺序逐个执行，不做并发。CC 用 `isConcurrencySafe(input)` 判断能否并发——注意这不是简单的"只读 vs 写"，而是按具体输入判断：
 
-| | isReadOnly | isConcurrencySafe |
-|---|---|---|
-| FileRead | true | true |
-| Glob | true | true |
-| Bash `ls` | true | **true** ← 关键差异 |
-| Bash `rm` | false | false |
-| TaskCreate | false | **true** ← 改状态但可并发（TaskCreate 在 s12 介绍） |
+|            | isReadOnly | isConcurrencySafe                                          |
+| ---------- | ---------- | ---------------------------------------------------------- |
+| FileRead   | true       | true                                                       |
+| Glob       | true       | true                                                       |
+| Bash`ls` | true       | **true** ← 关键差异                                 |
+| Bash`rm` | false      | false                                                      |
+| TaskCreate | false      | **true** ← 改状态但可并发（TaskCreate 在 s12 介绍） |
 
 CC 的 Bash tool 的 `isConcurrencySafe` 等于 `isReadOnly`——只读命令可并发，写命令不可。TaskCreate 虽然改了任务文件，但每次都写不同的文件，所以可以并发。
 
